@@ -17333,12 +17333,10 @@ var DatatableComponent = /** @class */ (function () {
          */
         set: function (val) {
             this._rows = val;
+            this._internalRows = val.slice();
             // auto sort on new updates
             if (!this.externalSorting) {
-                this._internalRows = utils_1.sortRows(val, this._internalColumns, this.sorts);
-            }
-            else {
-                this._internalRows = val.slice();
+                this._internalRows = utils_1.sortRows(this._internalRows, this._internalColumns, this.sorts);
             }
             // recalculate sizes/etc
             this.recalculate();
@@ -17602,7 +17600,7 @@ var DatatableComponent = /** @class */ (function () {
     DatatableComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         if (!this.externalSorting) {
-            this._internalRows = utils_1.sortRows(this._rows, this._internalColumns, this.sorts);
+            this._internalRows = utils_1.sortRows(this._internalRows, this._internalColumns, this.sorts);
         }
         // this has to be done to prevent the change detection
         // tree from freaking out because we are readjusting
@@ -17675,7 +17673,7 @@ var DatatableComponent = /** @class */ (function () {
     DatatableComponent.prototype.ngDoCheck = function () {
         if (this.rowDiffer.diff(this.rows)) {
             if (!this.externalSorting) {
-                this._internalRows = utils_1.sortRows(this._rows, this._internalColumns, this.sorts);
+                this._internalRows = utils_1.sortRows(this._internalRows, this._internalColumns, this.sorts);
             }
             else {
                 this._internalRows = this.rows.slice();
@@ -17734,7 +17732,10 @@ var DatatableComponent = /** @class */ (function () {
      */
     DatatableComponent.prototype.recalculateDims = function () {
         var dims = this.element.getBoundingClientRect();
-        this._innerWidth = Math.floor(dims.width);
+        // Only update inner width when width > 0
+        if (dims.width) {
+            this._innerWidth = Math.floor(dims.width);
+        }
         if (this.scrollbarV) {
             var height = dims.height;
             if (this.headerHeight)
@@ -17908,7 +17909,7 @@ var DatatableComponent = /** @class */ (function () {
         // the rows again on the 'push' detection...
         if (this.externalSorting === false) {
             // don't use normal setter so we don't resort
-            this._internalRows = utils_1.sortRows(this.rows, this._internalColumns, sorts);
+            this._internalRows = utils_1.sortRows(this._internalRows, this._internalColumns, sorts);
         }
         this.sorts = sorts;
         // Always go to first page when sorting to see the newly sorted data
@@ -21199,7 +21200,8 @@ function orderByComparator(a, b) {
 }
 exports.orderByComparator = orderByComparator;
 /**
- * Sorts the rows
+ * creates a shallow copy of the `rows` input and returns the sorted copy. this function
+ * does not sort the `rows` argument in place
  */
 function sortRows(rows, columns, dirs) {
     if (!rows)
@@ -21207,7 +21209,8 @@ function sortRows(rows, columns, dirs) {
     if (!dirs || !dirs.length || !columns)
         return rows.slice();
     /**
-     * create a mapping from each row to its row index prior to sorting
+     * record the row ordering of results from prior sort operations (if applicable)
+     * this is necessary to guarantee stable sorting behavior
      */
     var rowToIndexMap = new Map();
     rows.forEach(function (row, index) { return rowToIndexMap.set(row, index); });
@@ -21251,6 +21254,8 @@ function sortRows(rows, columns, dirs) {
             if (comparison !== 0)
                 return comparison;
         }
+        if (!(rowToIndexMap.has(rowA) && rowToIndexMap.has(rowB)))
+            return 0;
         /**
          * all else being equal, preserve original order of the rows (stable sort)
          */
