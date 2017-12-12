@@ -809,7 +809,11 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    */
   recalculateDims(): void {
     const dims = this.element.getBoundingClientRect();
-    this._innerWidth = Math.floor(dims.width);
+
+    // Only update inner width when width > 0
+    if(dims.width) {
+      this._innerWidth = Math.floor(dims.width);
+    }
 
     if (this.scrollbarV) {
       let height = dims.height;
