@@ -93,7 +93,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
         [pagerRightArrowIcon]="cssClasses.pagerRightArrow"
         [pagerPreviousIcon]="cssClasses.pagerPrevious"
         [selectedCount]="selected.length"
-        [selectedMessage]="!!selectionType && messages.selectedMessage"
+        [selectedMessage]="!!selectionType && messages.selectedMessage && !clickViewDetail"
         [pagerNextIcon]="cssClasses.pagerNext"
         (page)="onFooterPage($event)">
       </datatable-footer>
@@ -418,6 +418,12 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    * @memberOf DatatableComponent
    */
   @Input() selectAllRowsOnPage = false;
+
+  /**
+   * Property to which you can use for determining show selected text in footer
+   * @type {boolean}
+   */
+  @Input() clickViewDetail = false;
 
   /**
    * Body was scrolled typically in a `scrollbarV:true` scenario.

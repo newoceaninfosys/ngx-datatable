@@ -207,6 +207,11 @@ export declare class DatatableComponent implements OnInit, DoCheck, AfterViewIni
      */
     selectAllRowsOnPage: boolean;
     /**
+     * Property to which you can use for determining show selected text in footer
+     * @type {boolean}
+     */
+    clickViewDetail: boolean;
+    /**
      * Body was scrolled typically in a `scrollbarV:true` scenario.
      */
     scroll: EventEmitter<any>;
