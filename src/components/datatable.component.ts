@@ -93,7 +93,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
         [pagerRightArrowIcon]="cssClasses.pagerRightArrow"
         [pagerPreviousIcon]="cssClasses.pagerPrevious"
         [selectedCount]="selected.length"
-        [selectedMessage]="!!selectionType && messages.selectedMessage && !clickViewDetail"
+        [selectedMessage]="!!selectionType && !clickViewDetail && messages.selectedMessage"
         [pagerNextIcon]="cssClasses.pagerNext"
         (page)="onFooterPage($event)">
       </datatable-footer>
