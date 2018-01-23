@@ -101,6 +101,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
         [rowClass]="rowClass"
         [selectCheck]="selectCheck"
         [displayCheck]="displayCheck"
+        [bodyFullHeight]="bodyFullHeight"
         (page)="onBodyPage($event)"
         (activate)="activate.emit($event)"
         (rowContextmenu)="onRowContextmenu($event)"
@@ -862,8 +863,6 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     if (this.bodyFullHeight) {
       this.bodyHeight = this._limit * this.rowHeight;
     }
-
-    console.log(this._limit, this.rowHeight);
 
     this.recalculatePages();
   }

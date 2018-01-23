@@ -15,11 +15,12 @@ import { Component } from '@angular/core';
       <ngx-datatable
         class="material"
         [rows]="rows"
+        [bodyFullHeight]="true"
         [columns]="[{name:'Name'},{name:'Gender'},{name:'Company'}]"
         [columnMode]="'force'"
         [headerHeight]="50"
         [footerHeight]="50"
-        [rowHeight]="'auto'"
+        [rowHeight]="40"
         [limit]="10">
       </ngx-datatable>
     </div>

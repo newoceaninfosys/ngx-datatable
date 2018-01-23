@@ -127,7 +127,7 @@ var DataTableBodyComponent = /** @class */ (function () {
             return this._bodyHeight;
         },
         set: function (val) {
-            if (this.scrollbarV) {
+            if (this.scrollbarV || this.bodyFullHeight) {
                 this._bodyHeight = val + 'px';
             }
             else {
@@ -631,6 +631,10 @@ var DataTableBodyComponent = /** @class */ (function () {
         core_1.Input(),
         __metadata("design:type", String)
     ], DataTableBodyComponent.prototype, "groupRowsBy", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean)
+    ], DataTableBodyComponent.prototype, "bodyFullHeight", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", Number),

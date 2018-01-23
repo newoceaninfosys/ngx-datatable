@@ -111,6 +111,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   @Input() groupExpansionDefault: boolean;
   @Input() innerWidth: number;
   @Input() groupRowsBy: string;
+  @Input() bodyFullHeight: boolean;
 
   @Input() set pageSize(val: number) {
     this._pageSize = val;
@@ -171,7 +172,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   @Input()
   @HostBinding('style.height')
   set bodyHeight(val) {
-    if (this.scrollbarV) {
+    if (this.scrollbarV || this.bodyFullHeight) {
       this._bodyHeight = val + 'px';
     } else {
       this._bodyHeight = 'auto';
