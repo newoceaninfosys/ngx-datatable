@@ -17285,6 +17285,11 @@ var DatatableComponent = /** @class */ (function () {
          */
         this.clickViewDetail = false;
         /**
+         * Property to which you can use for determining caculate height of body by page size and cell height
+         * @type {boolean}
+         */
+        this.bodyFullHeight = false;
+        /**
          * Body was scrolled typically in a `scrollbarV:true` scenario.
          */
         this.scroll = new core_1.EventEmitter();
@@ -17673,8 +17678,8 @@ var DatatableComponent = /** @class */ (function () {
         return Array.from(map, function (x) { return addGroup(x[0], x[1]); });
     };
     /*
-    * Lifecycle hook that is called when Angular dirty checks a directive.
-    */
+     * Lifecycle hook that is called when Angular dirty checks a directive.
+     */
     DatatableComponent.prototype.ngDoCheck = function () {
         if (this.rowDiffer.diff(this.rows)) {
             if (!this.externalSorting) {
@@ -17749,6 +17754,10 @@ var DatatableComponent = /** @class */ (function () {
                 height = height - this.footerHeight;
             this.bodyHeight = height;
         }
+        if (this.bodyFullHeight) {
+            this.bodyHeight = this._limit * this.rowHeight;
+        }
+        console.log(this._limit, this.rowHeight);
         this.recalculatePages();
     };
     /**
@@ -18089,6 +18098,10 @@ var DatatableComponent = /** @class */ (function () {
         core_1.Input(),
         __metadata("design:type", Object)
     ], DatatableComponent.prototype, "clickViewDetail", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Object)
+    ], DatatableComponent.prototype, "bodyFullHeight", void 0);
     __decorate([
         core_1.Output(),
         __metadata("design:type", core_1.EventEmitter)

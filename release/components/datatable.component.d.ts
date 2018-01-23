@@ -212,6 +212,11 @@ export declare class DatatableComponent implements OnInit, DoCheck, AfterViewIni
      */
     clickViewDetail: boolean;
     /**
+     * Property to which you can use for determining caculate height of body by page size and cell height
+     * @type {boolean}
+     */
+    bodyFullHeight: boolean;
+    /**
      * Body was scrolled typically in a `scrollbarV:true` scenario.
      */
     scroll: EventEmitter<any>;

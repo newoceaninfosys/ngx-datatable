@@ -1,17 +1,43 @@
 import {
-  Component, Input, Output, ElementRef, EventEmitter, ViewChild,
-  HostListener, ContentChildren, OnInit, QueryList, AfterViewInit,
-  HostBinding, ContentChild, TemplateRef, IterableDiffer,
-  DoCheck, KeyValueDiffers, KeyValueDiffer, ViewEncapsulation,
-  ChangeDetectionStrategy, ChangeDetectorRef
+  Component,
+  Input,
+  Output,
+  ElementRef,
+  EventEmitter,
+  ViewChild,
+  HostListener,
+  ContentChildren,
+  OnInit,
+  QueryList,
+  AfterViewInit,
+  HostBinding,
+  ContentChild,
+  TemplateRef,
+  IterableDiffer,
+  DoCheck,
+  KeyValueDiffers,
+  KeyValueDiffer,
+  ViewEncapsulation,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import {
-  forceFillColumnWidths, adjustColumnWidths, sortRows,
-  setColumnDefaults, throttleable, translateTemplates
+  forceFillColumnWidths,
+  adjustColumnWidths,
+  sortRows,
+  setColumnDefaults,
+  throttleable,
+  translateTemplates
 } from '../utils';
 import { ScrollbarHelper } from '../services';
-import { ColumnMode, SortType, SelectionType, TableColumn, ContextmenuType } from '../types';
+import {
+  ColumnMode,
+  SortType,
+  SelectionType,
+  TableColumn,
+  ContextmenuType
+} from '../types';
 import { DataTableBodyComponent } from './body';
 import { DatatableGroupHeaderDirective } from './body/body-group-header.directive';
 import { DataTableColumnDirective } from './columns';
@@ -114,7 +140,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   @Input() set rows(val: any) {
     this._rows = val;
     this._internalRows = [...val];
-    
+
     // auto sort on new updates
     if (!this.externalSorting) {
       this._internalRows = sortRows(this._internalRows, this._internalColumns, this.sorts);
@@ -288,6 +314,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   @Input() set offset(val: number) {
     this._offset = val;
   }
+
   get offset(): number {
     return Math.max(Math.min(this._offset, Math.ceil(this.rowCount / this.pageSize) - 1), 0);
   }
@@ -424,6 +451,12 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    * @type {boolean}
    */
   @Input() clickViewDetail = false;
+
+  /**
+   * Property to which you can use for determining caculate height of body by page size and cell height
+   * @type {boolean}
+   */
+  @Input() bodyFullHeight = false;
 
   /**
    * Body was scrolled typically in a `scrollbarV:true` scenario.
@@ -641,11 +674,10 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   _columns: TableColumn[];
   _columnTemplates: QueryList<DataTableColumnDirective>;
 
-  constructor(
-    private scrollbarHelper: ScrollbarHelper,
-    private cd: ChangeDetectorRef,
-    element: ElementRef,
-    differs: KeyValueDiffers) {
+  constructor(private scrollbarHelper: ScrollbarHelper,
+              private cd: ChangeDetectorRef,
+              element: ElementRef,
+              differs: KeyValueDiffers) {
 
     // get ref to elm for measuring
     this.element = element.nativeElement;
@@ -715,7 +747,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
 
   /**
    * Creates a map with the data grouped by the user choice of grouping index
-   * 
+   *
    * @param originalArray the original array passed via parameter
    * @param groupByIndex  the index of the column to group the data by
    */
@@ -743,8 +775,8 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   }
 
   /*
-  * Lifecycle hook that is called when Angular dirty checks a directive.
-  */
+   * Lifecycle hook that is called when Angular dirty checks a directive.
+   */
   ngDoCheck(): void {
     if (this.rowDiffer.diff(this.rows)) {
       if (!this.externalSorting) {
@@ -787,10 +819,9 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    * Recalulcates the column widths based on column width
    * distribution mode and scrollbar offsets.
    */
-  recalculateColumns(
-    columns: any[] = this._internalColumns,
-    forceIdx: number = -1,
-    allowBleed: boolean = this.scrollbarH): any[] | undefined {
+  recalculateColumns(columns: any[] = this._internalColumns,
+                     forceIdx: number = -1,
+                     allowBleed: boolean = this.scrollbarH): any[] | undefined {
 
     if (!columns) return undefined;
 
@@ -817,7 +848,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     const dims = this.element.getBoundingClientRect();
 
     // Only update inner width when width > 0
-    if(dims.width) {
+    if (dims.width) {
       this._innerWidth = Math.floor(dims.width);
     }
 
@@ -827,6 +858,12 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
       if (this.footerHeight) height = height - this.footerHeight;
       this.bodyHeight = height;
     }
+
+    if (this.bodyFullHeight) {
+      this.bodyHeight = this._limit * this.rowHeight;
+    }
+
+    console.log(this._limit, this.rowHeight);
 
     this.recalculatePages();
   }
@@ -842,7 +879,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   /**
    * Body triggered a page event.
    */
-  onBodyPage({ offset }: any): void {
+  onBodyPage({offset}: any): void {
     this.offset = offset;
 
     this.page.emit({
@@ -930,21 +967,21 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   /**
    * The header triggered a contextmenu event.
    */
-  onColumnContextmenu({ event, column }: any): void {
-    this.tableContextmenu.emit({ event, type: ContextmenuType.header, content: column });
+  onColumnContextmenu({event, column}: any): void {
+    this.tableContextmenu.emit({event, type: ContextmenuType.header, content: column});
   }
 
   /**
    * The body triggered a contextmenu event.
    */
-  onRowContextmenu({ event, row }: any): void {
-    this.tableContextmenu.emit({ event, type: ContextmenuType.body, content: row });
+  onRowContextmenu({event, row}: any): void {
+    this.tableContextmenu.emit({event, type: ContextmenuType.body, content: row});
   }
 
   /**
    * The header triggered a column resize event.
    */
-  onColumnResize({ column, newValue }: any): void {
+  onColumnResize({column, newValue}: any): void {
     /* Safari/iOS 10.2 workaround */
     if (column === undefined) {
       return;
@@ -952,7 +989,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
 
     let idx: number;
     const cols = this._internalColumns.map((c, i) => {
-      c = { ...c };
+      c = {...c};
 
       if (c.$$id === column.$$id) {
         idx = i;
@@ -978,9 +1015,9 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   /**
    * The header triggered a column re-order event.
    */
-  onColumnReorder({ column, newValue, prevValue }: any): void {
+  onColumnReorder({column, newValue, prevValue}: any): void {
     const cols = this._internalColumns.map(c => {
-      return { ...c };
+      return {...c};
     });
 
     const prevCol = cols[newValue];
@@ -1008,7 +1045,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
       });
     }
 
-    const { sorts } = event;
+    const {sorts} = event;
 
     // this could be optimized better since it will resort
     // the rows again on the 'push' detection...
